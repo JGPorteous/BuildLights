@@ -4,23 +4,15 @@
 #endif
 
 #define PIN 6
+#define NO_OF_LEDS 16
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(16, PIN, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NO_OF_LEDS, PIN, NEO_RGB + NEO_KHZ800);
 
-// IMPORTANT: To reduce NeoPixel burnout risk, add 1000 uF capacitor across
-// pixel power leads, add 300 - 500 Ohm resistor on first pixel's data input
-// and minimize distance between Arduino and first pixel.  Avoid connecting
-// on a live circuit...if you must, connect GND first.
 char currentCommand;
 bool hasDelay = true;
 bool showStateUpdate = true;
 
 void setup() {
-  // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
-  #if defined (__AVR_ATtiny85__)
-    if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
-  #endif
-  // End of trinket special code
   Serial.begin(115200);
   Serial.println("BuildLights V1 Starting...");
 
@@ -37,7 +29,6 @@ void setup() {
   Serial.println("Running LED: ASDFGHJ");
   Serial.println("Rainbow: 1, Theater Chase Rainbow: 2");
   Serial.println("Off: o");
-  
 }
 
 void loop() {
@@ -264,8 +255,6 @@ void updateLights(char command) {
       theaterChaseRainbow(60);
       break;
     
- 
-
     case '6': 
       updateState("test command");
       hasDelay = false;
@@ -290,22 +279,6 @@ void updateState(String state)
   }
 } 
 
-void loopOLD() {
-  // Some example procedures showing how to display to the pixels:
-  colorWipe(strip.Color(255, 0, 0), 50); // Green
-  colorWipe(strip.Color(0, 255, 0), 50); // Red
-  colorWipe(strip.Color(0, 0, 255), 50); // Blue
-//colorWipe(strip.Color(0, 0, 0, 255), 50); // White RGBW
-  // Send a theater pixel chase in...
-  theaterChase(strip.Color(127, 127, 127), 50); // White
-  theaterChase(strip.Color(127, 0, 0), 50); // Red
-  theaterChase(strip.Color(0, 0, 127), 50); // Blue
-
-  rainbow(20);
-  rainbowCycle(20);
-  theaterChaseRainbow(50);
-}
-
 // Fill the dots one after the other with a color
 void colorWipe(uint32_t c, uint8_t wait) {
   for(uint16_t i=0; i<strip.numPixels(); i++) {
@@ -315,6 +288,7 @@ void colorWipe(uint32_t c, uint8_t wait) {
   }
 }
 
+// Run one LED along string
 void runLed(uint32_t c, uint8_t wait) {
   for(uint16_t i=0; i<strip.numPixels(); i++) {
     strip.setPixelColor(i, c);
@@ -326,6 +300,7 @@ void runLed(uint32_t c, uint8_t wait) {
   }
 }
 
+//Rainbow Effect
 void rainbow(uint8_t wait) {
   uint16_t i, j;
 
